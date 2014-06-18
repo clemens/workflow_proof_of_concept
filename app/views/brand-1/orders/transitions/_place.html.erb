@@ -1,0 +1,4 @@
+<%= form_for(order, url: transition_order_path(order), method: :put) do |f| %>
+  <%= hidden_field_tag :transition, :place %>
+  <%= f.submit 'Place' %>
+<% end %>

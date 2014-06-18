@@ -5,3 +5,6 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+Brand.where(identifier: 'brand-1').first_or_create!
+Brand.where(identifier: 'brand-2').first_or_create!

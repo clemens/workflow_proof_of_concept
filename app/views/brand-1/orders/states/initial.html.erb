@@ -1,0 +1,5 @@
+State: Initial
+
+<%- order.possible_transitions.each do |transition| %>
+  <%= render "orders/transitions/#{transition.name}", order: order %>
+<%- end -%>

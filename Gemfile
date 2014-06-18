@@ -38,3 +38,5 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+# gem 'flowster', github: 'clemens/flowster'
+gem 'flowster', path: '/Users/clemens/Code/flowster'
