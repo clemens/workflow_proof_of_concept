@@ -19,6 +19,10 @@ private
     OpenStruct.new(role_identifier: params[:role] || 'dealer')
   end
 
+  def default_url_options
+    { role: current_user.role_identifier }
+  end
+
   attr_reader :brand
 
 end

@@ -1,1 +1,11 @@
 <h2>Complete</h2>
+
+<%= form_for(order, url: transition_order_path(order), method: :put) do |f| %>
+  <%= hidden_field_tag :id, order.try(:id) %>
+  <%= hidden_field_tag :transition, :complete %>
+
+  <%= f.text_area :complete_comment %>
+
+  <%= f.submit 'Complete' %>
+
+<% end %>

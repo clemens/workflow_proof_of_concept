@@ -1,0 +1,6 @@
+<p>
+  Change role:
+    <%- %w[dealer superdealer backoffice].each do |role| -%>
+      <%= link_to_unless_current role, url_for(role: role) %>
+    <%- end -%>
+</p>

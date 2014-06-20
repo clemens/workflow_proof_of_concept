@@ -1,4 +1,4 @@
-State: <%= order.state %>
+<h1>Order #<%= order.try(:number) %>: <%= order.state %></h1>
 
 <%- order.possible_transitions.each do |transition| %>
   <%= render "orders/transitions/#{transition.name}", order: order %>

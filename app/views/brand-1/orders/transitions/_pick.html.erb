@@ -1,1 +1,10 @@
 <h2>Pick</h2>
+
+<%= form_for(order, url: transition_order_path(order), method: :put) do |f| %>
+  <%= hidden_field_tag :id, order.try(:id) %>
+  <%= hidden_field_tag :transition, :pick %>
+
+  <%= f.text_field :car_model_id %>
+
+  <%= f.submit 'Pick' %>
+<% end %>

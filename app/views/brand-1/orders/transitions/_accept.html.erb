@@ -1,1 +1,16 @@
 <h2>Accept</h2>
+
+<%= form_for(order, url: transition_order_path(order), method: :put) do |f| %>
+  <%= hidden_field_tag :id, order.try(:id) %>
+  <%= hidden_field_tag :transition, :accept %>
+
+  <%= f.label :accepted do %>
+    <%= f.check_box :accepted %>
+    Accept
+  <% end %>
+
+  <%= f.text_area :accept_comment %>
+
+  <%= f.submit 'Accept' %>
+
+<% end %>
