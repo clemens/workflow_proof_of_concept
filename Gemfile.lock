@@ -1,5 +1,6 @@
-PATH
-  remote: /Users/clemens/Code/flowster
+GIT
+  remote: git://github.com/clemens/flowster.git
+  revision: 7fd098bea493d1d9200813adb00fc66e63df2f96
   specs:
     flowster (0.0.1)
 
