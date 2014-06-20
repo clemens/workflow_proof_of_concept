@@ -34,6 +34,8 @@ Flowster::Preconditions.register :field_value, FieldValuePrecondition
 
 class SetAttributesHook < Flowster::Hook
   def execute(workflowable, attributes = {})
+    return unless attributes.present?
+
     attributes.each do |key, value|
       workflowable.send("#{key}=", value)
     end
