@@ -1,4 +1,11 @@
 <p>
+  Change brand:
+    <%- %w[brand-1 brand-2].each do |brand| -%>
+      <%= link_to_unless_current brand, url_for(subdomain: brand, only_path: false) %>
+    <%- end -%>
+</p>
+
+<p>
   Change role:
     <%- %w[dealer superdealer backoffice].each do |role| -%>
       <%= link_to_unless_current role, url_for(role: role) %>
