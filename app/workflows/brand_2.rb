@@ -37,6 +37,7 @@ Flowster.define_workflow :'brand-2' do
 
   # finish
   preconditions :finish do
+    field_value '{{ current_user.role_identifier }}', equals: 'dealer'
     field_value '{{ dealer_id }}', equals: '{{ current_user.dealer_id }}'
   end
 

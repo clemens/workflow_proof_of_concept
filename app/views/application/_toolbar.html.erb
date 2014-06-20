@@ -11,3 +11,10 @@
       <%= link_to_unless_current role, url_for(role: role) %>
     <%- end -%>
 </p>
+
+<p>
+  Change dealer ID:
+    <%- [1, 2].each do |dealer_id| -%>
+      <%= link_to_unless_current "Dealer #{dealer_id}", url_for(dealer_id: dealer_id) %>
+    <%- end -%>
+</p>

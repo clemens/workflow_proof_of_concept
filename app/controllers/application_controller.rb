@@ -16,11 +16,11 @@ private
   end
 
   def current_user
-    OpenStruct.new(role_identifier: params[:role] || 'dealer')
+    OpenStruct.new(role_identifier: params[:role] || 'dealer', dealer_id: (params[:dealer_id] || 1).to_i)
   end
 
   def default_url_options
-    { role: current_user.role_identifier }
+    { role: current_user.role_identifier, dealer_id: current_user.dealer_id }
   end
 
   attr_reader :brand
