@@ -1,0 +1,7 @@
+<h1>Order #<%= order.try(:number) %>: <%= order.state %></h1>
+
+<h2>Current tasks</h2>
+
+<%- workitems.each do |workitem| -%>
+  <%= render "orders/transitions/#{workitem.fields['params']['task']}", order: order, workitem: workitem %>
+<%- end -%>

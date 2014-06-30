@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20140618145757) do
     t.integer  "brand_id"
     t.integer  "dealer_id"
     t.integer  "car_model_id"
+    t.string   "workflow_id"
     t.string   "state"
     t.string   "number"
     t.datetime "accepted_at"

@@ -1,12 +1,8 @@
 class Order < ActiveRecord::Base
-  include Flowster::Workflowable
-
   belongs_to :brand
   belongs_to :dealer
 
-  delegate :workflow, to: :brand, allow_nil: true
-
-  attr_accessor :current_user
+  after_create :start_workflow
 
   def accepted?
     accepted_at.present?
@@ -16,4 +12,11 @@ class Order < ActiveRecord::Base
   def accepted=(accepted)
     self.accepted_at = Time.current if !accepted? && accepted.in?([1, '1', true, 'true'])
   end
+
+private
+
+  def start_workflow
+    update_column(:workflow_id, RuoteKit.engine.launch(brand.workflow, order_id: id))
+  end
+
 end

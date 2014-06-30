@@ -1,24 +1,39 @@
 class OrdersController < ApplicationController
-  def new
-    render template: "orders/states/#{order.state}"
-  end
-
   def show
   end
 
+  def new
+  end
+
+  def create
+    order.save
+    redirect_to order
+  end
+
   def transition
-    transition = params[:transition]
+    # FIXME
+    # render text: "Whoops, transition #{transition} impossible", status: :not_found and return if something
 
-    render text: "Whoops, transition #{transition} impossible", status: :not_found and return unless order.respond_to?(transition) && order.can_transition?(transition)
+    # We first assign the params and *afterwards* merge it into the workitem so we have proper data types.
+    order.assign_attributes(order_params)
 
-    if order.send(transition, params[:order]) && order.save
+    workitem = RuoteKit.storage_participant[Ruote::FlowExpressionId.from_id(params[:fei])]
+    workitem.fields = workitem.fields.merge(order.attributes.slice(*order_params.keys))
+
+    if order.save
+      RuoteKit.storage_participant.proceed(workitem)
       redirect_to order
     else
-      render template: "orders/states/#{order.state}"
+      render :show
     end
   end
 
 private
+
+  def order_params
+    params[:order] ||= {}
+    params[:order].permit(:car_model_id)
+  end
 
   def order
     @order ||= begin
@@ -28,11 +43,17 @@ private
         Order.new(state: 'initial', brand: brand)
       end
 
-      order.current_user = current_user
-
       order
     end
   end
   helper_method :order
+
+  def workitems
+    @workitems ||= RuoteKit.storage_participant.query(wfid: order.workflow_id).select do |workitem|
+      (allowed_roles = workitem.params['allowed_roles']).blank? ||
+        allowed_roles.include?(current_user.role_identifier)
+    end
+  end
+  helper_method :workitems
 
 end

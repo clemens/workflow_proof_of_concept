@@ -5,6 +5,8 @@ class CreateOrders < ActiveRecord::Migration
       t.references :dealer, index: true
       t.integer :car_model_id
 
+      t.string :workflow_id
+
       t.string :state
 
       t.string :number
