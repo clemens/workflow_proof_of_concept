@@ -1,19 +1,14 @@
 $workflows ||= {}
 
 $workflows[:'brand-1'] = Ruote.define do
-  # or make it:
-  # concurrence wait_for: 1 do
-  #   participant 'customer', task: 'place'
-  #   participant 'dealer',   task: 'place'
-  # end
-
   participant 'buyer', task: 'place', allowed_roles: [:customer, :dealer] # precondition
+  # hook
   filter do
-    field 'state', set: 'placed' # hook
+    field 'state', set: 'placed'
   end
 
   cursor do
-    participant 'dealer', task: 'pick'
+    participant 'dealer', task: 'pick', allowed_roles: [:dealer]
 
     # validation ... why isn't this simpler?
     filter 'errors', remove: true
@@ -22,31 +17,55 @@ $workflows[:'brand-1'] = Ruote.define do
     end
     rewind if: '${field:errors}'
 
+    # hook
     filter do
-      field 'state', set: 'in_progress' # hook
+      field 'state', set: 'in_progress'
     end
   end
 
   concurrence wait_for: 1 do
     sequence do
-      participant 'dealer', task: 'finish'
-      filter do
-        field 'finish_comment', empty: false # validation
-        field 'state', set: 'in_review'      # hook
+      cursor do
+        participant 'dealer', task: 'finish', allowed_roles: [:dealer]
+
+        # validation
+        filter 'errors', remove: true
+        filter do
+          # field 'finish_comment', size: '1,', record: 'errors'
+          field 'finish_comment', smatch: '\S+', record: 'errors'
+        end
+        rewind if: '${field:errors}'
+
+        # hook
+        filter do
+          field 'state', set: 'in_review'
+        end
       end
 
-      participant 'backoffice', task: 'accept' do
+      cursor do
+        participant 'backoffice', task: 'accept', allowed_roles: [:backoffice]
+
+        # FIXME
+        # validation
+        # filter 'errors', remove: true
+        # filter do
+        #   field 'accepted', is: true, record: 'errors'
+        # end
+        # rewind if: '${field:errors}'
+
+        # hook
         filter do
-          # field 'accepted', is: true # validation # FIXME
-          field 'state', set: 'done' # hook
+          field 'state', set: 'done'
         end
       end
     end
 
     sequence do
-      participant 'superdealer', task: 'complete'
+      participant 'superdealer', task: 'complete', allowed_roles: [:superdealer]
+
+      # hook
       filter do
-        field 'state', set: 'done' # hook
+        field 'state', set: 'done'
       end
     end
   end

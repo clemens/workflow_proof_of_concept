@@ -33,7 +33,12 @@ private
 
   def order_params
     params[:order] ||= {}
-    params[:order].permit(:car_model_id)
+    params[:order].permit(
+      :car_model_id,
+      :finish_comment,
+      :complete_comment,
+      :accept_comment, :accepted
+    )
   end
 
   def order
