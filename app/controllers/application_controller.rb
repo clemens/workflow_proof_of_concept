@@ -20,6 +20,10 @@ private
   end
   helper_method :current_user
 
+  def current_dealer
+    Dealer.find(current_user.dealer_id)
+  end
+
   def default_url_options
     { role: current_user.role_identifier, dealer_id: current_user.dealer_id }
   end

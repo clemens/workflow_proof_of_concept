@@ -8,3 +8,6 @@
 
 Brand.where(identifier: 'brand-1').first_or_create!
 Brand.where(identifier: 'brand-2').first_or_create!
+
+Dealer.where(email: 'dealer-1@example.com').first_or_create!
+Dealer.where(email: 'dealer-2@example.com').first_or_create!

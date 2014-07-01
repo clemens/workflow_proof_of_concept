@@ -16,7 +16,7 @@ class Order < ActiveRecord::Base
 private
 
   def start_workflow
-    update_column(:workflow_id, RuoteKit.engine.launch(brand.workflow, order_id: id))
+    update_column(:workflow_id, RuoteKit.engine.launch(brand.workflow, order_id: id, dealer: dealer.attributes))
   end
 
 end

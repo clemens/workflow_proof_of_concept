@@ -2,7 +2,11 @@ require 'ruote/part/smtp_participant'
 
 class EmailParticipant < Ruote::SmtpParticipant
   def consume(workitem)
-    puts "This would send an email (#{workitem.inspect}) ..."
+    to, template = workitem.params.values_at('to', 'template')
+
+    puts "This would send an email to #{to} with the template #{template} ..."
+
+    reply_to_engine(workitem)
   end
 end
 
@@ -12,5 +16,5 @@ RuoteKit.engine.register do
   participant :superdealer, Ruote::StorageParticipant
   participant :backoffice, Ruote::StorageParticipant
 
-  participant :office_email, EmailParticipant, to: 'office@example.com'
+  participant :email, EmailParticipant
 end

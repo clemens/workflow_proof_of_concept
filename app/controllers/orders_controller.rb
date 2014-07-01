@@ -7,6 +7,8 @@ class OrdersController < ApplicationController
   end
 
   def create
+    order.dealer = current_dealer
+
     order.save
     redirect_to order
   end

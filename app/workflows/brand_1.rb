@@ -21,6 +21,8 @@ $workflows[:'brand-1'] = Ruote.define do
     filter do
       field 'state', set: 'in_progress'
     end
+
+    email to: 'office@example.com', template: :order_processing_started
   end
 
   concurrence wait_for: 1 do
@@ -40,6 +42,8 @@ $workflows[:'brand-1'] = Ruote.define do
         filter do
           field 'state', set: 'in_review'
         end
+
+        email to: 'office@example.com', template: :order_finished
       end
 
       cursor do
@@ -57,6 +61,8 @@ $workflows[:'brand-1'] = Ruote.define do
         filter do
           field 'state', set: 'done'
         end
+
+        email to: '${dealer.email}', template: :order_accepted
       end
     end
 
@@ -67,6 +73,8 @@ $workflows[:'brand-1'] = Ruote.define do
       filter do
         field 'state', set: 'done'
       end
+
+      email to: 'office@example.com', template: :order_completed
     end
   end
 end

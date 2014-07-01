@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20140618145757) do
   end
 
   create_table "dealers", force: true do |t|
+    t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
