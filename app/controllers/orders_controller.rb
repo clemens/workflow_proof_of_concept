@@ -1,5 +1,6 @@
 class OrdersController < ApplicationController
   def show
+    apply_errors(order)
   end
 
   def new
@@ -55,5 +56,19 @@ private
     end
   end
   helper_method :workitems
+
+  def apply_errors(order)
+    if workitem = workitems.detect { |workitem| workitem.fields['errors'].present? } # really?
+      workitem.fields['errors'].each do |error|
+        # error is an array containing the validation filter itself and deviations
+        # example: [{"field"=>"car_model_id", "in"=>[1, 2]}, "car_model_id", nil]
+        # TODO how to do multiple validations at once?
+        validation, field = error.first(2)
+
+        type = validation.key?('in') ? :inclusion : :invalid # TODO lookup
+        order.errors.add(field, type)
+      end
+    end
+  end
 
 end

@@ -12,11 +12,19 @@ $workflows[:'brand-1'] = Ruote.define do
     field 'state', set: 'placed' # hook
   end
 
-  participant 'dealer', task: 'pick'
+  cursor do
+    participant 'dealer', task: 'pick'
 
-  filter do
-    field 'car_model_id', in: CarModel.pluck(:id) # validation
-    field 'state',        set: 'in_progress'      # hook
+    # validation ... why isn't this simpler?
+    filter 'errors', remove: true
+    filter do
+      field 'car_model_id', in: CarModel.pluck(:id), record: 'errors'
+    end
+    rewind if: '${field:errors}'
+
+    filter do
+      field 'state', set: 'in_progress' # hook
+    end
   end
 
   concurrence wait_for: 1 do
