@@ -3,8 +3,8 @@ Rails.application.routes.draw do
   resources :orders
 
   # RuoteKit routes
-  match '/_ruote' => RuoteKit::Application, via: :any
-  match '/_ruote/*path' => RuoteKit::Application, via: :any
+  match '/_ruote' => RuoteKit::Application, via: :get
+  match '/_ruote/*path' => RuoteKit::Application, via: [:get, :post, :put, :patch, :delete]
 
   root to: 'application#index'
 end
