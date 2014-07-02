@@ -1,22 +1,68 @@
 $workflows ||= {}
 
 $workflows[:'brand-2'] = Ruote.define do
-  # or make it:
-  # concurrence wait_for: 1 do
-  #   participant 'customer', task: 'place'
-  #   participant 'dealer',   task: 'place'
-  # end
-
-  participant 'buyer',  task: 'place'
-
-  participant 'dealer', task: 'pick'
-
+  participant 'buyer', task: 'place', allowed_roles: [:customer, :dealer] # precondition
+  # hook
   filter do
-    field 'car_model_id', in: CarModel.pluck(:id)
+    field 'state', set: 'placed'
   end
 
-  participant 'dealer',     task: 'finish'
-  participant 'backoffice', task: 'accept'
+  cursor do
+    participant 'dealer', task: 'pick', allowed_roles: [:dealer]
+
+    # validation ... why isn't this simpler?
+    filter 'errors', remove: true
+    filter do
+      field 'car_model_id', in: CarModel.pluck(:id), record: 'errors'
+    end
+    rewind if: '${errors}'
+
+    # hook
+    filter do
+      field 'state', set: 'in_progress'
+    end
+
+    participant 'email', to: 'office@example.com', template: :order_processing_started
+  end
+
+  cursor do
+    # TODO order.dealer_id == current_user.dealer_id
+    participant 'dealer', task: 'finish', allowed_roles: [:dealer]
+
+    # validation
+    filter 'errors', remove: true
+    filter do
+      # field 'finish_comment', size: '1,', record: 'errors'
+      field 'finish_comment', smatch: '\S+', record: 'errors'
+    end
+    rewind if: '${errors}'
+
+    # hook
+    filter do
+      field 'state', set: 'in_review'
+    end
+
+    participant 'email', to: 'office@example.com', template: :order_finished
+  end
+
+  cursor do
+    participant 'backoffice', task: 'accept', allowed_roles: [:backoffice]
+
+    # FIXME
+    # validation
+    # filter 'errors', remove: true
+    # filter do
+    #   field 'accepted', is: true, record: 'errors'
+    # end
+    # rewind if: '${errors}'
+
+    # hook
+    filter do
+      field 'state', set: 'done'
+    end
+
+    participant 'email', to: '${dealer.email}', template: :order_accepted
+  end
 end
 
 # Flowster.define_workflow :'brand-2' do

@@ -15,19 +15,20 @@ $workflows[:'brand-1'] = Ruote.define do
     filter do
       field 'car_model_id', in: CarModel.pluck(:id), record: 'errors'
     end
-    rewind if: '${field:errors}'
+    rewind if: '${errors}'
 
     # hook
     filter do
       field 'state', set: 'in_progress'
     end
 
-    email to: 'office@example.com', template: :order_processing_started
+    participant 'email', to: 'office@example.com', template: :order_processing_started
   end
 
   concurrence wait_for: 1 do
     sequence do
       cursor do
+        # TODO order.dealer_id == current_user.dealer_id
         participant 'dealer', task: 'finish', allowed_roles: [:dealer]
 
         # validation
@@ -36,14 +37,14 @@ $workflows[:'brand-1'] = Ruote.define do
           # field 'finish_comment', size: '1,', record: 'errors'
           field 'finish_comment', smatch: '\S+', record: 'errors'
         end
-        rewind if: '${field:errors}'
+        rewind if: '${errors}'
 
         # hook
         filter do
           field 'state', set: 'in_review'
         end
 
-        email to: 'office@example.com', template: :order_finished
+        participant 'email', to: 'office@example.com', template: :order_finished
       end
 
       cursor do
@@ -55,14 +56,14 @@ $workflows[:'brand-1'] = Ruote.define do
         # filter do
         #   field 'accepted', is: true, record: 'errors'
         # end
-        # rewind if: '${field:errors}'
+        # rewind if: '${errors}'
 
         # hook
         filter do
           field 'state', set: 'done'
         end
 
-        email to: '${dealer.email}', template: :order_accepted
+        participant 'email', to: '${dealer.email}', template: :order_accepted
       end
     end
 
@@ -74,7 +75,7 @@ $workflows[:'brand-1'] = Ruote.define do
         field 'state', set: 'done'
       end
 
-      email to: 'office@example.com', template: :order_completed
+      participant 'email', to: 'office@example.com', template: :order_completed
     end
   end
 end
